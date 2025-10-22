@@ -11,22 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 코드 체크아웃
+      - name: Repository 체크아웃
         run: |
-          echo "📁 코드 체크아웃 시작..."
-          pwd
+          echo "📁 Repository 체크아웃 시작..."
+          git clone https://github.com/Teacher-Kwon/Edu_crawler.git .
+          echo "📁 체크아웃 완료 - 파일 목록:"
           ls -la
-          echo "📁 상위 디렉토리 확인:"
-          ls -la ..
-          echo "📁 루트 디렉토리 확인:"
-          ls -la /home/runner/work/
-          echo "📁 Edu_crawler 디렉토리 확인:"
-          ls -la /home/runner/work/Edu_crawler/
-          echo "📁 현재 작업 디렉토리로 이동:"
-          cd /home/runner/work/Edu_crawler/Edu_crawler
-          pwd
-          ls -la
-          echo "📁 코드 체크아웃 완료"
+          echo "📄 Python 파일들:"
+          find . -name "*.py" -type f
+          echo "📄 기타 파일들:"
+          find . -name "*.txt" -o -name "*.json" -o -name "*.md" | head -10
 
       - name: Python 설정 및 의존성 설치
         run: |
