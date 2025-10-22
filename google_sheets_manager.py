@@ -207,6 +207,21 @@ class GoogleSheetsManager:
                 logger.error(f"워크시트 생성 실패: {e}")
                 return False
     
+    def get_worksheets(self):
+        """스프레드시트의 모든 워크시트 정보 가져오기"""
+        try:
+            result = self.service.spreadsheets().get(
+                spreadsheetId=self.spreadsheet_id
+            ).execute()
+            
+            worksheets = result.get('sheets', [])
+            logger.info(f"워크시트 수: {len(worksheets)}")
+            return worksheets
+            
+        except HttpError as e:
+            logger.error(f"워크시트 정보 가져오기 실패: {e}")
+            return []
+    
     def setup_headers(self, worksheet_name, headers):
         """워크시트 헤더 설정"""
         try:

@@ -56,53 +56,53 @@ class FinalEducationNewsManager:
     
     def initialize_google_sheets(self):
         """Google Sheets 초기화 (통합된 버전)"""
-        print("🔍 Google Sheets 연동 확인 중...")
+        print("Google Sheets 연동 확인 중...")
         
         # 1. 자격 증명 파일 확인
         if not os.path.exists(GOOGLE_CREDENTIALS_FILE):
-            print(f"❌ 자격 증명 파일이 없습니다: {GOOGLE_CREDENTIALS_FILE}")
-            print("💡 Google Cloud Console에서 서비스 계정을 생성하고 키 파일을 다운로드하세요.")
-            print("   📋 자세한 설정 방법: SHEETS_CONNECTION_GUIDE.md 파일 참조")
+            print(f"자격 증명 파일이 없습니다: {GOOGLE_CREDENTIALS_FILE}")
+            print("Google Cloud Console에서 서비스 계정을 생성하고 키 파일을 다운로드하세요.")
+            print("   자세한 설정 방법: SHEETS_CONNECTION_GUIDE.md 파일 참조")
             return False
         
         # 2. 스프레드시트 ID 확인
         if not SPREADSHEET_ID:
-            print("❌ 스프레드시트 ID가 설정되지 않았습니다.")
-            print("💡 config.py에서 SPREADSHEET_ID를 설정해주세요.")
+            print("스프레드시트 ID가 설정되지 않았습니다.")
+            print("config.py에서 SPREADSHEET_ID를 설정해주세요.")
             return False
         
         # 3. Google Sheets 연결 시도
         try:
-            print("🔄 Google Sheets 연결 시도 중...")
+            print("Google Sheets 연결 시도 중...")
             self.sheets_manager = GoogleSheetsManager(GOOGLE_CREDENTIALS_FILE, SPREADSHEET_ID)
             
             # 연결 테스트
             worksheets = self.sheets_manager.get_worksheets()
-            print(f"✅ Google Sheets 연결 성공! (워크시트 수: {len(worksheets)})")
+            print(f"Google Sheets 연결 성공! (워크시트 수: {len(worksheets)})")
             
             # 대상 워크시트 확인
             target_worksheet = None
             for ws in worksheets:
-                if ws.title == WORKSHEET_NAME:
+                if ws.get('properties', {}).get('title') == WORKSHEET_NAME:
                     target_worksheet = ws
                     break
             
             if not target_worksheet:
-                print(f"⚠️ 대상 워크시트 '{WORKSHEET_NAME}'가 없습니다.")
-                print("💡 워크시트를 생성하거나 이름을 확인해주세요.")
+                print(f"대상 워크시트 '{WORKSHEET_NAME}'가 없습니다.")
+                print("워크시트를 생성하거나 이름을 확인해주세요.")
                 return False
             
-            print(f"✅ 대상 워크시트 '{WORKSHEET_NAME}' 확인")
+            print(f"대상 워크시트 '{WORKSHEET_NAME}' 확인")
             return True
             
         except Exception as e:
-            print(f"❌ Google Sheets 연결 실패: {e}")
-            print("💡 다음을 확인해주세요:")
+            print(f"Google Sheets 연결 실패: {e}")
+            print("다음을 확인해주세요:")
             print("   1. credentials.json 파일이 올바른지 확인")
             print("   2. Google Sheets에서 서비스 계정 이메일로 공유 설정")
             print("   3. Google Sheets API가 활성화되어 있는지 확인")
             print("   4. 스프레드시트 ID가 올바른지 확인")
-            print("   📋 자세한 해결 방법: SHEETS_CONNECTION_GUIDE.md 파일 참조")
+            print("   자세한 해결 방법: SHEETS_CONNECTION_GUIDE.md 파일 참조")
             return False
     
     def load_existing_news(self) -> List[Dict]:
@@ -135,17 +135,17 @@ class FinalEducationNewsManager:
     def crawl_and_save_news(self) -> bool:
         """뉴스 크롤링 및 저장 (최종 통합 버전)"""
         try:
-            print("🚀 교육 뉴스 크롤링 시작...")
+            print("교육 뉴스 크롤링 시작...")
             start_time = datetime.now()
             
             # 뉴스 크롤링
             new_news_list = self.crawler.crawl_all_sources(NEWS_SOURCES)
             
             if not new_news_list:
-                print("⚠️ 크롤링된 뉴스가 없습니다.")
+                print("크롤링된 뉴스가 없습니다.")
                 return False
             
-            print(f"📊 새로 수집된 뉴스: {len(new_news_list)}개")
+            print(f"새로 수집된 뉴스: {len(new_news_list)}개")
             
             # 중복 제거
             unique_new_news = []
@@ -155,10 +155,10 @@ class FinalEducationNewsManager:
                 else:
                     print(f"중복 제외: {news.get('제목', '')[:30]}...")
             
-            print(f"🔄 중복 제거 후 새 뉴스: {len(unique_new_news)}개")
+            print(f"중복 제거 후 새 뉴스: {len(unique_new_news)}개")
             
             if not unique_new_news:
-                print("ℹ️ 새로운 뉴스가 없습니다.")
+                print("새로운 뉴스가 없습니다.")
                 return True
             
             # 기존 뉴스와 합치기
@@ -173,15 +173,15 @@ class FinalEducationNewsManager:
             
             # 구글 스프레드시트에 업로드
             if self.sheets_manager:
-                print("📤 Google Sheets 업로드 시작...")
+                print("Google Sheets 업로드 시작...")
                 success = self.upload_to_sheets(unique_new_news)
                 if success:
-                    print("✅ Google Sheets 업로드 완료!")
+                    print("Google Sheets 업로드 완료!")
                 else:
-                    print("❌ Google Sheets 업로드 실패!")
+                    print("Google Sheets 업로드 실패!")
             else:
-                print("⚠️ Google Sheets가 연결되지 않았습니다.")
-                print("💡 JSON 파일로만 저장됩니다.")
+                print("Google Sheets가 연결되지 않았습니다.")
+                print("JSON 파일로만 저장됩니다.")
             
             # JSON 파일로도 저장 (백업)
             self.crawler.save_to_json(unique_new_news, 'education_news.json')
@@ -204,7 +204,7 @@ class FinalEducationNewsManager:
                         alert['severity']
                     )
             
-            print(f"⏱️ 크롤링 완료 (소요시간: {duration:.1f}초)")
+            print(f"크롤링 완료 (소요시간: {duration:.1f}초)")
             
             return True
             
@@ -216,7 +216,7 @@ class FinalEducationNewsManager:
         """구글 스프레드시트에 데이터 업로드 (개선된 버전)"""
         try:
             if not self.sheets_manager:
-                print("❌ Google Sheets 매니저가 초기화되지 않았습니다.")
+                print("Google Sheets 매니저가 초기화되지 않았습니다.")
                 return False
             
             # 워크시트 생성 (이미 존재하면 무시)
@@ -228,7 +228,7 @@ class FinalEducationNewsManager:
             # 헤더 중복 방지: 기존 데이터가 없거나 헤더가 없을 때만 설정
             if not existing_data or len(existing_data) == 0:
                 self.sheets_manager.setup_headers(WORKSHEET_NAME, COLUMNS)
-                print("✅ 헤더 설정 완료")
+                print("헤더 설정 완료")
                 # 헤더 설정 후 다시 데이터 가져오기
                 existing_data = self.sheets_manager.get_worksheet_data(WORKSHEET_NAME)
             
@@ -269,25 +269,25 @@ class FinalEducationNewsManager:
                     
                     # 전체 워크시트 교체 (헤더 + 데이터)
                     success = self.sheets_manager.replace_worksheet_data(WORKSHEET_NAME, combined_df)
-                    print(f"📊 전체 데이터 업데이트: {len(combined_df)}개 뉴스")
+                    print(f"전체 데이터 업데이트: {len(combined_df)}개 뉴스")
                 else:
                     # 새 데이터만 추가
                     success = self.sheets_manager.append_data(WORKSHEET_NAME, df)
-                    print(f"📊 새 데이터 추가: {len(df)}개 뉴스")
+                    print(f"새 데이터 추가: {len(df)}개 뉴스")
                 
                 if success:
-                    print(f"✅ 구글 스프레드시트 업로드 완료 (최신순 정렬)")
+                    print(f"구글 스프레드시트 업로드 완료 (최신순 정렬)")
                     return True
                 else:
-                    print("❌ 구글 스프레드시트 업로드 실패")
+                    print("구글 스프레드시트 업로드 실패")
                     return False
             else:
-                print("⚠️ 업로드할 뉴스 데이터가 없습니다.")
+                print("업로드할 뉴스 데이터가 없습니다.")
                 return True
                 
         except Exception as e:
             error_handler.handle_error(e, "구글 스프레드시트 업로드 실패")
-            print(f"❌ 업로드 중 오류 발생: {e}")
+            print(f"업로드 중 오류 발생: {e}")
             return False
     
     def get_system_status(self) -> Dict:
@@ -302,7 +302,7 @@ class FinalEducationNewsManager:
 def main():
     """메인 실행 함수"""
     setup_logging()
-    print("🎯 최종 통합된 교육 뉴스 크롤링 프로그램")
+    print("최종 통합된 교육 뉴스 크롤링 프로그램")
     print("=" * 50)
     
     try:
@@ -311,7 +311,7 @@ def main():
         
         # 시스템 상태 출력
         status = manager.get_system_status()
-        print(f"📊 시스템 상태:")
+        print(f"시스템 상태:")
         print(f"   - Google Sheets: {'연결됨' if status['google_sheets_connected'] else '연결 안됨'}")
         print(f"   - 기존 뉴스: {status['existing_news_count']}개")
         
@@ -319,21 +319,21 @@ def main():
         success = manager.crawl_and_save_news()
         
         if success:
-            print("✅ 교육 뉴스 크롤링 및 저장 완료")
+            print("교육 뉴스 크롤링 및 저장 완료")
             
             # 성능 통계 출력
             perf_stats = status['performance_summary']
             if perf_stats.get('status') != 'no_data':
-                print(f"📈 성능 통계:")
+                print(f"성능 통계:")
                 print(f"   - 성공률: {perf_stats.get('success_rate', 0):.1%}")
                 print(f"   - 평균 응답시간: {perf_stats.get('avg_response_time', 0):.1f}초")
                 print(f"   - 수집된 뉴스: {perf_stats.get('total_news_collected', 0)}개")
         else:
-            print("❌ 교육 뉴스 크롤링 및 저장 실패")
+            print("교육 뉴스 크롤링 및 저장 실패")
             
     except Exception as e:
         error_handler.handle_error(e, "메인 프로그램 실행 실패")
-        print(f"❌ 프로그램 실행 중 치명적 오류 발생: {e}")
+        print(f"프로그램 실행 중 치명적 오류 발생: {e}")
 
 if __name__ == "__main__":
     main()
