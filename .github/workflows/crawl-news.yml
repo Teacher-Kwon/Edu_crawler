@@ -11,21 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Repository 체크아웃
+      - name: 코드 체크아웃
         run: |
-          echo "📁 Repository 체크아웃 시작..."
-          # GitHub Actions에서 자동으로 체크아웃된 파일들 확인
+          echo "📁 GitHub Actions 자동 체크아웃 확인..."
           echo "📁 현재 디렉토리:"
           pwd
-          echo "📁 상위 디렉토리 확인:"
-          ls -la ..
-          echo "📁 루트 워크스페이스 확인:"
-          ls -la /home/runner/work/
-          echo "📁 Edu_crawler 워크스페이스 확인:"
-          ls -la /home/runner/work/Edu_crawler/
-          echo "📁 Repository 파일들 복사:"
-          cp -r /home/runner/work/Edu_crawler/* . 2>/dev/null || echo "복사 실패 - 직접 파일 생성"
-          echo "📁 현재 디렉토리 파일 목록:"
+          echo "📁 파일 목록:"
           ls -la
           echo "📄 Python 파일들:"
           find . -name "*.py" -type f
