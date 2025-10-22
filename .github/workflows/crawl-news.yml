@@ -21,8 +21,20 @@ jobs:
           python --version
           pip --version
 
-          echo "📦 의존성 설치 중..."
-          pip install -r requirements.txt
+          echo "📁 현재 디렉토리 확인:"
+          pwd
+          ls -la
+
+          echo "📦 requirements.txt 파일 확인:"
+          if [ -f "requirements.txt" ]; then
+            echo "✅ requirements.txt 파일 발견"
+            cat requirements.txt
+            echo "📦 의존성 설치 중..."
+            pip install -r requirements.txt
+          else
+            echo "❌ requirements.txt 파일이 없습니다. 수동으로 설치합니다."
+            pip install requests beautifulsoup4 lxml pandas openpyxl pytz google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client schedule psutil python-dotenv
+          fi
 
       - name: 환경변수 설정
         run: |
