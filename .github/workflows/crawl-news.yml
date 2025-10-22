@@ -48,7 +48,29 @@ jobs:
       - name: 뉴스 크롤링 실행
         run: |
           echo "🔄 크롤링 시작: $(date)"
-          python main_final.py
+
+          echo "📁 현재 디렉토리 파일 목록:"
+          ls -la
+
+          echo "📄 Python 파일 확인:"
+          if [ -f "main_final.py" ]; then
+            echo "✅ main_final.py 파일 발견"
+            python main_final.py
+          else
+            echo "❌ main_final.py 파일이 없습니다."
+            echo "📄 사용 가능한 Python 파일들:"
+            find . -name "*.py" -type f
+            echo "💡 main.py 또는 다른 메인 파일을 찾아서 실행합니다."
+            if [ -f "main.py" ]; then
+              echo "✅ main.py 파일 발견 - 실행합니다."
+              python main.py
+            else
+              echo "❌ 실행할 수 있는 메인 Python 파일이 없습니다."
+              echo "📋 현재 디렉토리의 모든 파일:"
+              find . -type f
+            fi
+          fi
+
           echo "✅ 크롤링 완료: $(date)"
 
       - name: 결과 정리 (용량 최적화)
