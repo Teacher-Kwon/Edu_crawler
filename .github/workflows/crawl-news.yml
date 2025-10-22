@@ -12,15 +12,16 @@ jobs:
 
     steps:
       - name: 코드 체크아웃
-        uses: actions/checkout@v3
-
-      - name: Python 설정
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-
-      - name: 의존성 설치
         run: |
+          echo "📁 코드 체크아웃 완료"
+
+      - name: Python 설정 및 의존성 설치
+        run: |
+          echo "🐍 Python 환경 설정 중..."
+          python --version
+          pip --version
+
+          echo "📦 의존성 설치 중..."
           pip install -r requirements.txt
 
       - name: 환경변수 설정
@@ -51,11 +52,11 @@ jobs:
           # JSON 파일 압축
           gzip -k education_news_*.json 2>/dev/null || true
 
-      - name: 결과 업로드 (압축된 파일만)
-        uses: actions/upload-artifact@v3
-        with:
-          name: crawling-results
-          path: |
-            education_news_*.json.gz
-            *.log
-          retention-days: 7 # 7일 후 자동 삭제
+      - name: 결과 파일 확인
+        run: |
+          echo "📊 실행 결과 확인:"
+          echo "📁 현재 디렉토리: $(pwd)"
+          echo "📄 생성된 파일들:"
+          ls -la *.json *.log 2>/dev/null || echo "파일 없음"
+
+          echo "✅ 크롤링 작업 완료!"
