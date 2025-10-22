@@ -15,10 +15,10 @@ jobs:
         run: |
           echo "📁 Repository 체크아웃 시작..."
           echo "🔐 인증된 git clone 시도..."
-          
+
           # Personal Access Token을 사용한 인증된 clone
           git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/Teacher-Kwon/Edu_crawler.git temp_repo
-          
+
           if [ -d "temp_repo" ]; then
             echo "✅ Repository 클론 성공!"
             cp -r temp_repo/* .

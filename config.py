@@ -23,6 +23,16 @@ NEWS_SOURCES = [
         'name': '교육언론창',
         'url': 'https://www.educhang.co.kr/news/articleList.html?page=3&total=5831&box_idxno=&view_type=sm',
         'base_url': 'https://www.educhang.co.kr/'
+    },
+    {
+        'name': '에듀프레스',
+        'url': 'https://www.edupress.kr/news/articleList.html?sc_section_code=S1N1&view_type=sm',
+        'base_url': 'https://www.edupress.kr/'
+    },
+    {
+        'name': '경향신문',
+        'url': 'https://www.khan.co.kr/national/education/articles',
+        'base_url': 'https:/www.khan.co.kr/'
     }
 ]
 
