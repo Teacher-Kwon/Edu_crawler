@@ -13,6 +13,19 @@ jobs:
     steps:
       - name: 코드 체크아웃
         run: |
+          echo "📁 코드 체크아웃 시작..."
+          pwd
+          ls -la
+          echo "📁 상위 디렉토리 확인:"
+          ls -la ..
+          echo "📁 루트 디렉토리 확인:"
+          ls -la /home/runner/work/
+          echo "📁 Edu_crawler 디렉토리 확인:"
+          ls -la /home/runner/work/Edu_crawler/
+          echo "📁 현재 작업 디렉토리로 이동:"
+          cd /home/runner/work/Edu_crawler/Edu_crawler
+          pwd
+          ls -la
           echo "📁 코드 체크아웃 완료"
 
       - name: Python 설정 및 의존성 설치
