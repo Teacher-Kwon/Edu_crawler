@@ -18,11 +18,10 @@ google-api-python-client==2.108.0
 schedule==1.2.0
 
 # 성능 및 모니터링
-concurrent-futures==3.1.1
 psutil==5.9.6
 
 # 이메일 알림 (선택사항)
-secure-smtplib==0.1.1
+# secure-smtplib==0.1.1  # 선택사항이므로 주석 처리
 
 # 로깅 및 설정
 python-dotenv==1.0.0
