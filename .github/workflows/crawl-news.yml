@@ -22,6 +22,16 @@ jobs:
           find . -name "*.py" -type f
           echo "📄 기타 파일들:"
           find . -name "*.txt" -o -name "*.json" -o -name "*.md" | head -10
+          
+          # 만약 파일이 없다면 직접 다운로드
+          if [ ! -f "main_final.py" ]; then
+            echo "📥 Repository 파일들을 직접 다운로드합니다..."
+            curl -L https://github.com/Teacher-Kwon/Edu_crawler/archive/main.tar.gz | tar -xz --strip-components=1
+            echo "📁 다운로드 후 파일 목록:"
+            ls -la
+            echo "📄 Python 파일들:"
+            find . -name "*.py" -type f
+          fi
 
       - name: Python 설정 및 의존성 설치
         run: |
