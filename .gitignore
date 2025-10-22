@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 환경변수
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 로그 파일
+*.log
+logs/
+
+# 임시 파일
+*.tmp
+*.temp
+
+# 크롤링 결과 (선택적)
+# education_news_*.json
+# existing_news.json
+
+# Google Sheets 인증 (보안상 제외)
+credentials.json
+
+# OS
+.DS_Store
+Thumbs.db

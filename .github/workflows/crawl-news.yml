@@ -1,0 +1,61 @@
+name: 교육 뉴스 크롤링
+
+on:
+  schedule:
+    # 매시간 정시에 실행 (한국시간)
+    - cron: "0 * * * *" # UTC 기준 (한국시간 -9시간)
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  crawl-news:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Python 설정
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: 의존성 설치
+        run: |
+          pip install -r requirements.txt
+
+      - name: 환경변수 설정
+        run: |
+          echo "SPREADSHEET_ID=${{ secrets.SPREADSHEET_ID }}" >> $GITHUB_ENV
+          echo "GOOGLE_CREDENTIALS_FILE=credentials.json" >> $GITHUB_ENV
+
+      - name: Google Sheets 인증 설정
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > credentials.json
+
+      - name: 뉴스 크롤링 실행
+        run: |
+          echo "🔄 크롤링 시작: $(date)"
+          python main_final.py
+          echo "✅ 크롤링 완료: $(date)"
+
+      - name: 결과 정리 (용량 최적화)
+        run: |
+          echo "📊 실행 시간: $(date)"
+          echo "📁 현재 디렉토리: $(pwd)"
+          echo "📄 생성된 파일들:"
+          ls -la *.json *.log 2>/dev/null || echo "파일 없음"
+
+          # 오래된 로그 파일 삭제 (7일 이상)
+          find . -name "*.log" -mtime +7 -delete
+
+          # JSON 파일 압축
+          gzip -k education_news_*.json 2>/dev/null || true
+
+      - name: 결과 업로드 (압축된 파일만)
+        uses: actions/upload-artifact@v3
+        with:
+          name: crawling-results
+          path: |
+            education_news_*.json.gz
+            *.log
+          retention-days: 7 # 7일 후 자동 삭제
