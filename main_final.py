@@ -161,10 +161,10 @@ class FinalEducationNewsManager:
                 print("새로운 뉴스가 없습니다.")
                 return True
             
-            # 기존 뉴스와 합치기
+            # 기존 뉴스와 합치기 (새 뉴스가 뒤에 추가되어 자연스럽게 최신순)
             all_news = self.existing_news + unique_new_news
             
-            # 최신순으로 정렬 (최대 100개 유지)
+            # 최대 100개 유지 (오래된 뉴스부터 제거)
             all_news = all_news[-100:]
             
             # 기존 뉴스 업데이트
@@ -240,10 +240,9 @@ class FinalEducationNewsManager:
                 # 중복 제거 (제목 기준)
                 df = df.drop_duplicates(subset=['제목'], keep='last')
                 
-                # 날짜 기준으로 최신순 정렬 (새 뉴스가 맨 위에 오도록)
+                # 날짜 형식만 정리 (정렬은 제거)
                 if '날짜' in df.columns:
                     df['날짜'] = pd.to_datetime(df['날짜'], errors='coerce')
-                    df = df.sort_values('날짜', ascending=False, na_position='last')
                     df['날짜'] = df['날짜'].dt.strftime('%Y-%m-%d')
                 
                 # 크롤링시간 정리
@@ -261,10 +260,9 @@ class FinalEducationNewsManager:
                     # 중복 제거 (제목 기준, 새 데이터 우선)
                     combined_df = combined_df.drop_duplicates(subset=['제목'], keep='first')
                     
-                    # 날짜 기준으로 최신순 정렬 (새 뉴스가 맨 위에)
+                    # 날짜 형식만 정리 (정렬은 제거)
                     if '날짜' in combined_df.columns:
                         combined_df['날짜'] = pd.to_datetime(combined_df['날짜'], errors='coerce')
-                        combined_df = combined_df.sort_values('날짜', ascending=False, na_position='last')
                         combined_df['날짜'] = combined_df['날짜'].dt.strftime('%Y-%m-%d')
                     
                     # 전체 워크시트 교체 (헤더 + 데이터)
@@ -276,7 +274,7 @@ class FinalEducationNewsManager:
                     print(f"새 데이터 추가: {len(df)}개 뉴스")
                 
                 if success:
-                    print(f"구글 스프레드시트 업로드 완료 (최신순 정렬)")
+                    print(f"구글 스프레드시트 업로드 완료")
                     return True
                 else:
                     print("구글 스프레드시트 업로드 실패")

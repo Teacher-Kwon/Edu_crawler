@@ -185,6 +185,28 @@ class EducationNewsCrawler:
                     all_links.extend(title_by_class)
                 if not all_links:
                     all_links = [link for link in link_titles if link.get_text(strip=True) and len(link.get_text(strip=True)) > 10]
+            elif 'khan' in source_name.lower() or '경향' in source_name:
+                # 경향신문 특화 파싱
+                # 경향신문은 뉴스 리스트 구조가 다름
+                # 1. 뉴스 리스트 컨테이너 찾기
+                news_containers = soup.find_all(['div', 'ul', 'li'], class_=re.compile(r'list|news|article|item'))
+                
+                # 2. 링크에서 제목 추출 (경향신문은 링크 기반)
+                all_links = soup.find_all('a', href=True)
+                
+                # 3. 뉴스 관련 링크만 필터링
+                news_links = []
+                for link in all_links:
+                    href = link.get('href', '')
+                    text = link.get_text(strip=True)
+                    
+                    # 뉴스 링크 패턴 확인
+                    if (any(pattern in href.lower() for pattern in ['article', 'news', 'view']) and
+                        len(text) > 10 and
+                        not any(skip in text.lower() for skip in ['메뉴', '로그인', '검색', '구독', '알림'])):
+                        news_links.append(link)
+                
+                all_links = news_links
             elif 'educhang' in source_name.lower():
                 # 교육언론창 특화 파싱
                 title_elements = soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
